@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- Employee View -->
+    <record id="hr_employee_view_form" model="ir.ui.view">
+        <field name="name">hr.employee.view.form</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='job_title']" position="before">
+                <field name="khmer_name"  placeholder="Employee's Khmer Name"/>
+            </xpath>
+
+            <xpath expr="//field[@name='category_ids']" position="before">
+                <field name="employee_number" placeholder="Employee's ID"/>
+            </xpath>
+
+            <xpath expr="//field[@name='address_home_id']" position="before">
+                <field name="family_information"/>
+            </xpath>
+            <xpath expr="//field[@name='address_id']" position="after">
+                <field name="start_working_date" string="Entry Date"/>
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="view_employee_filter" model="ir.ui.view">
+        <field name="name">hr.employee.search</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_filter"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search/field[@name='name']" position="replace">
+                <field name="name" string="Employee" filter_domain="['|','|','|', ('work_email', 'ilike', self), ('name', 'ilike', self), ('khmer_name', 'ilike', self), ('employee_number', 'ilike', self)]"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="employee_inherit_tree" model="ir.ui.view">
+        <field name="name">Employee Tree View</field>
+        <field name="model">hr.employee</field>
+        <field name="inherit_id" ref="hr.view_employee_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="khmer_name"/>
+            </xpath>
+            <xpath expr="//field[@name='name']" position="before">
+                <field name="employee_number" string="ID"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Contract Form -->
+    <record id="hr_contract_form_inherit" model="ir.ui.view">
+        <field name="name">hr.contract.view.form.inherit</field>
+        <field name="model">hr.contract</field>
+        <field name="inherit_id" ref="hr_contract.hr_contract_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@name='wage']" position="after">
+                <label for="entry_salary"/>
+                <div class="o_row" name="entry_salary">
+                    <field name="entry_salary" nolabel="1"/>
+                    <span>/ month</span>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Employee Publice View -->
+    <record id="hr_employee_public_view_tree" model="ir.ui.view">
+        <field name="name">hr.employee.tree</field>
+        <field name="model">hr.employee.public</field>
+        <field name="inherit_id" ref="hr.hr_employee_public_view_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="khmer_name"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

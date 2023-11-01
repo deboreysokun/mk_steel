@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+    <record id="view_purchase_request_form" model="ir.ui.view">
+        <field name="name">purchase.request.form</field>
+        <field name="model">purchase.request</field>
+        <field name="inherit_id" ref="purchase_request.view_purchase_request_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//header/button[@name='button_done']" position="before">
+                <button name="button_paid" states="approved" string="Paid" type="object" class="oe_highlight" groups="purchase_request.group_purchase_request_manager"/>
+            </xpath>
+            <xpath expr="//header/button[@name='button_draft']" position="replace">
+                <button name="button_draft" states="to_approve,approved,rejected,done,paid" string="Reset" type="object" groups="purchase_request.group_purchase_request_manager"/>
+            </xpath>
+            <xpath expr="//header/button[@name='button_done']" position="replace">
+                <button name="button_done" states="paid" string="Done" type="object" class="oe_highlight" groups="purchase_request.group_purchase_request_manager"/>
+            </xpath>
+            <xpath expr="//header/field[@name='state']" position="replace">
+               <field name="state" widget="statusbar" statusbar_visible="draft,to_approve,approved,done,rejected,paid" statusbar_colors="{&quot;approved&quot;:&quot;blue&quot;}"/>
+            </xpath>
+
+            <xpath expr="//field[@name='requested_by']" position="before">
+                <field name="employee_id" attrs="{'readonly': [('is_editable','=', False)]}"/>
+            </xpath>
+            <xpath expr="//field[@name='requested_by']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+            <xpath expr="//field[@name='line_ids']/tree" position="attributes">
+                <attribute name="editable">bottom</attribute>
+            </xpath>
+            <xpath expr="//field[@name='line_ids']" position="attributes">
+                <attribute name="attrs">{'readonly': [('state','!=', 'draft')]}</attribute>
+            </xpath>
+
+        </field>
+    </record>
+
+    <record id="view_purchase_request_tree" model="ir.ui.view">
+        <field name="name">view_purchase_request_tree</field>
+        <field name="model">purchase.request</field>
+        <field name="inherit_id" ref="purchase_request.view_purchase_request_tree" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='requested_by']" position="before">
+                <field name="employee_id"/>
+            </xpath>
+            <xpath expr="//field[@name='requested_by']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_purchase_request_search" model="ir.ui.view">
+        <field name="name">view_purchase_request_search</field>
+        <field name="model">purchase.request</field>
+        <field name="inherit_id" ref="purchase_request.view_purchase_request_search" />
+        <field name="arch" type="xml">
+            <xpath expr="//filter[@name='state_rejected']" position="before">
+                <filter
+                    name="state_paid"
+                    string="Paid" domain="[('state','=','paid')]" help="Request is paid"
+                />
+            </xpath>
+            <xpath expr="//group[1]" position="inside">
+                <filter
+                    name="group_requester"
+                    string="Requester"
+                    context="{'group_by':'employee_id'}"
+                />
+            </xpath>
+            <field name="requested_by" position="before">
+                <field name="employee_id" />
+            </field>
+        </field>
+    </record>
+
+    <record id="purchase_request_line_tree" model="ir.ui.view">
+        <field name="name">purchase.request.line.tree</field>
+        <field name="model">purchase.request.line</field>
+        <field name="inherit_id" ref="purchase_request.purchase_request_line_tree"/>
+        <field name="arch" type="xml">
+            <field name="requested_by" position="after">
+                <field name="employee_id"/>
+            </field>
+            <field name="requested_by" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </field>
+        </field>
+    </record>
+
+    <record id="purchase_request_line_search" model="ir.ui.view">
+        <field name="name">purchase.request.line.search</field>
+        <field name="model">purchase.request.line</field>
+        <field name="inherit_id" ref="purchase_request.purchase_request_line_search" />
+        <field name="arch" type="xml">
+            <xpath expr="//group[1]" position="inside">
+                <filter
+                    name="requester_group"
+                    string="Requester"
+                    domain="[]"
+                    context="{'group_by':'employee_id'}"
+                />
+            </xpath>
+            <field name="requested_by" position="before">
+                <field name="employee_id" />
+            </field>
+        </field>
+    </record>
+
+</odoo>

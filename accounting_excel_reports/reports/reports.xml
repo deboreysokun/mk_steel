@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+        <report
+            id="profitloss_xlsx"
+            model="accounting.report"
+            string="Report in Excel"
+            report_type="xlsx"
+            name="accounting_excel_report.export.xlsx"
+            file="Financial Report.xlsx"
+            menu="False"/>
+
+        <report
+            id="aged_partner_balance_xlsx"
+            model="account.aged.trial.balance"
+            string="Aged Partner Balance xlsx"
+            report_type="xlsx"
+            name="accounting_excel_report.aged_partner_balance.xlsx"
+            file="Aged Partner Balance.xlsx"
+            menu="False"/>
+
+        <report
+            id="journals_audit_xlsx"
+            model="account.print.journal"
+            string="Journals Audit xlsx"
+            report_type="xlsx"
+            name="accounting_excel_report.journals_audit.xlsx"
+            file="Journals Audit.xlsx"
+            menu="False"/>
+
+        <report
+            id="partner_ledger_xlsx"
+            model="account.report.partner.ledger"
+            string="Report Parnter Ledger xlsx"
+            report_type="xlsx"
+            name="accounting_excel_report.partner_ledger.xlsx"
+            file="Partner Ledger.xlsx"
+            menu="False"/>
+
+        <report
+            id="general_ledger_xlsx"
+            model="account.report.general.ledger"
+            string="Report General Ledger xlsx"
+            report_type="xlsx"
+            name="accounting_excel_report.general_ledger.xlsx"
+            file="General Ledger.xlsx"
+            menu="False"/>
+
+        <report
+            id="trial_balance_xlsx"
+            model="account.balance.report"
+            string="Report Trial Balance xlsx"
+            report_type="xlsx"
+            name="accounting_excel_report.trial_balance.xlsx"
+            file="Trial Balance.xlsx"
+            menu="False"/>
+
+        <report
+            id="tax_report_xlsx"
+            model="account.tax.report"
+            string="Report Tax xlsx"
+            report_type="xlsx"
+            name="accounting_excel_report.tax_report.xlsx"
+            file="Tax Report.xlsx"
+            menu="False"/>
+
+</odoo>

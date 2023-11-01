@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_hr_payslip_form" model="ir.ui.view">
+        <field name="name">hr.payslip.form</field>
+        <field name="model">hr.payslip</field>
+        <field name="inherit_id" ref="hr_payroll_community.view_hr_payslip_form" />
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='name']" position="after">
+                <field name="exchange_rate"/>
+                <field name="incentive"/>
+                <field name="severance"/>
+                <field name="seniority_bonus"/>
+                <field name="seniority_payment"/>
+                <field name="deduction"/>
+
+                <field name="overtime_150"/>
+                <field name="overtime_200"/>
+                <field name="remaining_leave"/>
+                <field name="additional_allowance"/>
+                <field name="attendance_bonus"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="group_employee_attendance" model="res.groups">
+            <field name="name">Create Employee Attendance</field>
+        </record>
+
+        <record id="group_employee_attendance_report" model="res.groups">
+            <field name="name">Employee Attendance Report</field>
+        </record>
+
+        <record id="group_employee_al" model="res.groups">
+            <field name="name">Employee Annual Leave</field>
+        </record>
+
+        <!-- Inital AL View -->
+        <record id="employee_al_tree_view" model="ir.ui.view">
+            <field name="name">Employee Attendance</field>
+            <field name="model">employee.attendance</field>
+            <field name="arch" type="xml">
+                <tree string="Inital AL" editable="bottom">
+                    <field name="employee_id" options="{'no_create': True}"/>
+                    <field name="date"/>
+                    <field name="inital_al"/>
+                    <field name="annual_leave"/>
+                </tree>
+            </field>
+        </record>
+
+        <!-- Actions -->
+        <record id="employee_al_action" model="ir.actions.act_window">
+            <field name="name">Employee Annual Leave</field>
+            <field name="res_model">employee.attendance</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="employee_al_tree_view" />
+            <field name="domain">[('inital_al', '=', True)]</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Employee Annual Leave.
+                </p>
+            </field>
+        </record>
+
+        <!-- Tree View -->
+        <record id="employee_attendance_tree_view" model="ir.ui.view">
+            <field name="name">Employee Attendance</field>
+            <field name="model">employee.attendance</field>
+            <field name="arch" type="xml">
+                <tree string="Employee Attendance" editable="bottom">
+                    <field name="employee_id" options="{'no_create': True}"/>
+                    <field name="date"/>
+                    <field name="worked_hours" sum="Total Hours"/>
+                    <field name="late_coming" string="Late/left early"/>
+                    <field name="overtime_hours" sum="Total OT Nor"/>
+                    <field name="overtime_sunday" sum="Total OT Sun"/>
+                    <field name="annual_leave" sum="Total AL"/>
+                </tree>
+            </field>
+        </record>
+
+
+        <record id="employee_attendance_view_filter" model="ir.ui.view">
+            <field name="name">Employee Attendance Filter</field>
+            <field name="model">employee.attendance</field>
+            <field name="arch" type="xml">
+                <search string="Search Attendance">
+                    <field name="employee_id" filter_domain="['|','|', ('employee_id.name', 'ilike', self), ('employee_id.khmer_name', 'ilike', self), ('employee_id.employee_number', 'ilike', self)]"/>
+                    <filter string="Today" name="today" domain="[('date', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                    <filter name="yesterday_filter" string="Yesterday" domain="[('date', '=', (context_today()-relativedelta(days=1)).strftime('%Y-%m-%d'))]" />
+                    <filter string="This Week" name="date_filter" domain="[
+                    ('date', '>=', (datetime.datetime.combine(context_today() + relativedelta(weeks=-1,days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S')),
+                    ('date', '&lt;', (datetime.datetime.combine(context_today() + relativedelta(days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
+                    <filter string="This Month" name="thismonth" domain="[('date','&gt;=',time.strftime('%%Y-%%m-01'))]"/>
+                    <filter string="This Year" name="year" domain="[('date','&lt;=', time.strftime('%%Y-12-31')),('date','&gt;=',time.strftime('%%Y-01-01')),('date','&lt;=', time.strftime('%%Y-12-31')),('date','&gt;=',time.strftime('%%Y-01-01'))]"/>
+
+                    <separator/>
+                    <filter name="prev_month_filter" string="Previous Month"
+                    domain="[('date', '&gt;=', (context_today()-relativedelta(months=1)).strftime('%%Y-%%m-01')),('date', '&lt;', time.strftime('%%Y-%%m-01'))]"/>
+                    <group expand="0" string="Group By">
+                        <filter string="Employees" name="employee_id" context="{'group_by':'employee_id'}"/>
+                        <filter string="Date" name="date" context="{'group_by':'date'}"/>
+                    </group>
+                </search>
+            </field>
+        </record>
+
+        <!-- Actions -->
+        <record id="employee_attendance_action" model="ir.actions.act_window">
+            <field name="name">Employee Attendance</field>
+            <field name="res_model">employee.attendance</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('inital_al', '=', False)]</field>
+            <field name="help" type="html">
+                <p class="oe_view_nocontent_create">
+                    Click to create new Employee Attendance Record.
+                </p>
+            </field>
+        </record>
+
+
+        <!-- MenuItems -->
+        <menuitem id="menu_employee_attendance" name="Attendance"
+                  parent="hr.menu_hr_root"
+                  sequence="5"
+                  groups="mksteel_employee_attendance.group_employee_attendance_report"/>
+        <menuitem id="employee_attendance" name="Attendance"
+                  parent="menu_employee_attendance"
+                  action="employee_attendance_action"
+                  sequence="1"
+                  groups="mksteel_employee_attendance.group_employee_attendance"/>
+
+        <menuitem id="employee_al" name="Annual Leave"
+                    parent="menu_employee_attendance"
+                    action="employee_al_action"
+                    sequence="2"
+                    groups="mksteel_employee_attendance.group_employee_al"/>
+
+    </data>
+</odoo>

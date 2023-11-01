@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <record id="view_order_form" model="ir.ui.view">
+        <field name="name">Purchase Order Secondary Unit</field>
+        <field name="model">purchase.order</field>
+        <field name="inherit_id" ref="purchase_order_secondary_unit.purchase_order_form" />
+        <field name="groups_id" eval="[(4, ref('uom.group_uom'))]" />
+        <field name="arch" type="xml">
+            <xpath
+                expr="//field[@name='order_line']/form//field[@name='secondary_uom_qty']"
+                position="replace"
+            >
+                <field
+                    name="secondary_uom_qty"
+                    string="Pcs"
+                    class="oe_inline oe_no_button"
+                    attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}"
+                />
+            </xpath>
+            <xpath
+                expr="//field[@name='order_line']/form//field[@name='secondary_uom_id']"
+                position="replace"
+            >
+                <field
+                    name="secondary_uom_id"
+                    string="Kg/Pcs"
+                    class="oe_inline"
+                    domain="[('product_tmpl_id.product_variant_ids', 'in', [product_id])]"
+                    attrs="{'readonly': [('state', 'in', ('done', 'cancel'))]}"
+                />
+            </xpath>
+            <xpath
+                expr="//field[@name='order_line']/tree//field[@name='secondary_uom_qty']"
+                position="replace"
+            >
+                <field
+                    name="secondary_uom_qty"
+                    string="Pcs"
+                    attrs="{'readonly': [('parent.state', 'in', ('done', 'cancel'))]}"
+                />
+            </xpath>
+            <xpath
+                expr="//field[@name='order_line']/tree//field[@name='secondary_uom_id']"
+                position="replace"
+            >
+                <field
+                    name="secondary_uom_id"
+                    string="Kg/Pcs"
+                    domain="[('product_tmpl_id.product_variant_ids', 'in', [product_id])]"
+                    options="{'no_create': True}"
+                    attrs="{'readonly': [('parent.state', 'in', ('done', 'cancel'))]}"
+                />
+            </xpath>
+
+            <xpath expr="//field[@name='notes']" position="after">
+                <group>
+                    <field name="tot_qty"/>
+                    <field name="grand_total_weight" />
+                </group>
+            </xpath>
+
+        </field>
+    </record>
+
+</odoo>

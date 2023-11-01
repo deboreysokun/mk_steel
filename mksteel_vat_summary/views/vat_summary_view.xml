@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="vat_summary_group_user" model="res.groups">
+        <field name="name">Manage Vat Summary</field>
+    </record>
+
+    <record id="vat_summary_view_form" model="ir.ui.view">
+        <field name="name">vat.summary.view.form</field>
+        <field name="model">vat.summary</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Vat Summary">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+                    <field name="active" invisible="1"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Summary Vat 10% in Jun-21"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name='forward_balance' string="Forward From Before"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="summary" string="Summary">
+                            <field name="vat_summary_ids">
+                                <tree string="Summary" editable="bottom">
+                                    <field name="number_id"/>
+                                    <field name="date"/>
+                                    <field name="partner_name"/>
+                                    <field name="no_vat" string=""/>
+                                    <field name="amount"/>
+                                    <field name="vat_amount"/>
+                                    <field name="vat_in"/>
+                                    <!--field name="balance"/-->
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                    <group  class="oe_subtotal_footer">
+                        <field name='end_balance' string="Total ending balance"/>
+                        <field name='exchange_rate' string="Exchange Rate"/>
+                        <field name='end_balance_usd' string="Total USD"/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="vat_summary_view_search" model="ir.ui.view">
+        <field name="name">vat.summary.view.search</field>
+        <field name="model">vat.summary</field>
+        <field name="arch" type="xml">
+            <search string="Search..">
+                <field name="name" string="Title" />
+                <filter
+                    string="Archived"
+                    domain="[('active', '=', False)]"
+                    name="inactive"
+                />
+            </search>
+        </field>
+    </record>
+
+    <!-- Tree View -->
+    <record id="vat_summary_tree_view" model="ir.ui.view">
+        <field name="name">vat.summary.tree.view</field>
+        <field name="model">vat.summary</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name"/>
+                <field name="forward_balance" string="Before"/>
+                <field name="end_balance" string="Balance(Riel)"/>
+                <field name="end_balance_usd" string="Balance(USD)"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="vat_summary_action" model="ir.actions.act_window">
+        <field name="name">Tax Summary</field>
+        <field name="res_model">vat.summary</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="vat_summary_tree_view"/>
+    </record>
+
+    <!-- MenuItems -->
+    <menuitem
+        id="menu_vat_summary"
+        name="Vat Summary"
+        parent="account.menu_finance"
+        groups="vat_summary_group_user"
+        sequence="10"
+    />
+    <menuitem
+        id="vat_summary_menu"
+        action="vat_summary_action"
+        parent="menu_vat_summary"
+    />
+
+</odoo>

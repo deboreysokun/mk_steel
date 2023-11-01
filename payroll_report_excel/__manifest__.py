@@ -1,0 +1,17 @@
+{
+    'name': 'payroll report in excel',
+    'version': '13.0.1.0.0',
+    'category': 'payroll',
+    'sequence': 60,
+    'summary': 'shows the payroll report in xlsx format',
+    'description': "It shows payroll report in excel for given month",
+    'author':'aswathy, A2A digital',
+    'depends': ['base','hr', 'hr_payroll_community','mksteel_employee_attendance'],
+    'data': ['wizard/payroll_report_wiz.xml',
+      'security/ir.model.access.csv',
+      'views/payroll_rate_view.xml',
+    ],
+    'installable': True,
+    'auto_install': False,
+    'application': False,
+}

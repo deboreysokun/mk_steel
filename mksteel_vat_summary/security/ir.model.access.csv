@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_vat_summary,vat.summary,model_vat_summary,mksteel_vat_summary.vat_summary_group_user,1,1,1,0
+access_vat_summary_line,vat.summary.line,model_vat_summary_line,mksteel_vat_summary.vat_summary_group_user,1,1,1,1
+

@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<odoo>
+    <data>
+        <!-- QWeb Reports -->
+        <report
+            id="account_move_mksteel_invoice"
+            model="account.move"
+            string="MKSteel Invoice"
+            report_type="qweb-pdf"
+            name="account_move_mksteel_ext.report_invoice_mksteel_invoice"
+            file="account_move_mksteel_ext.report_invoice_mksteel_invoice"
+        />
+
+        <template id="report_invoice_mksteel_invoice">
+            <t t-call="web.html_container">
+                <t t-foreach="docs" t-as="o">
+                <t t-if="not o" t-set="o" t-value="doc"/>
+                <!-- Multicompany -->
+                <t t-if="o and 'company_id' in o">
+                    <t t-set="company" t-value="o.company_id"></t>
+                </t>
+                <t t-if="not o or not 'company_id' in o">
+                    <t t-set="company" t-value="res_company"></t>
+                </t>
+                    <div class="article" t-att-data-oe-model="o and o._name" t-att-data-oe-id="o and o.id" t-att-data-oe-lang="o and o.env.context.get('lang')">
+                        <t t-raw="0"/>
+                        <div class="header">
+                            <div class="row">
+                                <div class="col-2">
+                                    <img src='/web/binary/company_logo' alt="Logo" height="70px" align="left"/>
+                                </div>
+                            </div>
+                            <div style="text-align:left;vertical-align: middle">
+                                <div style="font-size:16px;">Chom Choa, Khan Dang Kor Phnom Penh,</div>
+                                <div style="font-size:16px;">Tel: 012 811 634 </div>
+                            </div>
+                            <div style="border-bottom:2px solid black; margin-top:5px;"/>
+                        </div>
+
+                        <div class="page">
+                            <div class="text-center">
+                                <h3>Invoice</h3>
+                            </div>
+                            <div class="row">
+                                <div class="col-8">
+                                    <table class="table table-borderless" style="font-size:14px;font-weight:bold;">
+                                        <tr>
+                                            <td style="width:250px;padding-top:0px;">
+                                                <strong><span>Customer: </span> <span t-field="o.partner_id.name"/></strong>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width:250px;padding-top:0px;">
+                                                <span>Address: </span>
+                                                <span t-field="o.partner_id.street"/>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="width:250px;padding-top:0px;"><span>Tel:</span> <span t-field="o.partner_id.phone"/><br/>
+                                                <span t-field="o.partner_id.mobile"/>
+                                            </td>
+
+                                        </tr>
+                                    </table>
+
+                                </div>
+                                <div>
+                                    <table class="table table-borderless" style="font-size:14px;font-weight:bold;padding-left:50px;">
+                                        <tr style="margin-left: 50px">
+                                            <td><span>Ref. No</span> <t t-if="o.invoice_origin"> <span t-field="o.invoice_origin"/></t> <t t-if="not o.invoice_origin"> <span t-field="o.name"/></t></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="padding-top:0px;"><span>Date: </span><span t-field="o.invoice_date" t-options="{&quot;format&quot;: &quot;dd/MM/yyyy&quot;}"/></td>
+
+                                        </tr>
+                                        <!--tr>
+                                            <td><span>កំណត់កាលបរិច្ឆេទ​/Due Date:</span></td>
+                                            <td><span t-field="o.date_due"/></td>
+                                        </tr-->
+                                    </table>
+                                </div>
+                            </div>
+                            <div class="text-center" style="font-family:'Moul',cursive;padding-top:15px;">
+                            </div>
+
+                            <table class="table table-borderless" style="font-size:14px;">
+                                <thead>
+                                    <tr>
+                                        <td class="text-center" style="border:1px solid black; width: 30px">
+                                            <div>ល.រ</div>
+                                            <div>No</div>
+                                        </td>
+                                        <td class="text-center" style="border:1px solid black; width:320px">
+                                            <div>បរិយាយ</div>
+                                            <div>Description</div>
+                                        </td>
+
+                                        <td class="text-center" style="border:1px solid black; width:80px">
+                                            <div>បរិមាណ</div>
+                                            <div>Qty</div>
+                                        </td>
+                                        <td class="text-center" style="border:1px solid black; width:80px">
+                                            <div>គីឡូ / kg</div>
+                                        </td>
+                                        <td class="text-center" style="border:1px solid black; width:80px">
+                                            <div>គីឡូសរុប/Total W't(Kg)</div>
+                                        </td>
+                                        <td class="text-center" style="border:1px solid black;width:130px">
+                                            <div>តម្លៃឯកតា</div>
+                                            <div>Unit Price</div>
+                                        </td>
+                                        <td class="text-center" style="border:1px solid black;width:130px">
+                                            <div>សរុបជាដុល្លា</div>
+                                            <div>Amount(USD)</div>
+                                        </td>
+
+                                    </tr>
+                                </thead>
+                                <tbody class="invoice_tbody">
+                                    <tr t-foreach="o.invoice_line_ids" t-as="l" style="page-break-inside:avoid">
+                                        <td class="text-center" style="border:1px solid black;padding:5px;"><span t-esc="l_index+1"/></td>
+                                        <td style="border:1px solid black;padding:5px;">
+                                            <span t-field="l.name"/>
+                                            <t t-if="l.discount != 0.0">Discount:<span t-esc="l.discount"/>%</t>
+                                        </td>
+                                        <td class="text-center" style="border:1px solid black;padding:5px;">
+                                            <t t-if="l.product_id.type == 'product'"><span t-esc="'{0:,.0f}'.format(l.secondary_uom_qty)"/></t>
+                                            <t t-if="l.product_id.type == 'service'"><span t-esc="'{0:,.0f}'.format(l.quantity)"/></t>
+                                        </td>
+                                        <td class="text-center" style="border:1px solid black;padding:5px;">
+                                            <span t-field="l.secondary_uom_id.factor"/>
+                                        </td>
+                                        <td class="text-center" style="border:1px solid black;padding:5px;">
+                                            <t t-if="l.product_id.type == 'product'"><span t-esc="'{0:,.2f}'.format(l.quantity)"/></t>
+                                        </td>
+
+                                        <td class="text-right" style="border:1px solid black;padding:5px;">
+                                            $ <span t-esc="'{0:,.3f}'.format(l.price_unit)"/>
+                                        </td>
+                                        <td class="text-right" style="border:1px solid black;padding:5px;">
+                                            $ <span t-esc="'{0:,.2f}'.format(l.price_subtotal)"/>
+                                        </td>
+                                    </tr>
+                                    <tr style="page-break-inside:avoid">
+                                        <td colspan="7" style="border:1px solid black;text-align:right;font-weight:bold;padding:5px;height:25px;">
+
+                                        </td>
+                                    </tr>
+                                    <tr style="page-break-inside:avoid">
+                                        <td class="text-center" colspan="2" style="border:1px solid black;text-align:center;font-weight:bold;padding:5px;">សរុប / Sub Total</td>
+                                        <td class="text-center" style="border:1px solid black;padding:5px;"><span t-esc="'{0:,.0f}'.format(o.tot_qty)"/></td>
+                                        <td style="border:1px solid black;padding:5px;"></td>
+                                        <td class="text-center" style="border:1px solid black;padding:5px;"><span t-esc="'{0:,.2f}'.format(o.grand_total_weight)"/></td>
+                                        <td style="border:1px solid black;padding:5px;"></td>
+                                        <td class="text-right" style="border:1px solid black;padding:5px;">$ <t t-esc="'{0:,.2f}'.format(o.amount_total)"/></td>
+                                    </tr>
+                                    <tr>
+                                        <td colspan="7" ><span t-field="o.narration"/></td>
+                                    </tr>
+                                    <tr style="page-break-inside:avoid">
+                                        <td class="text-center" colspan="2" style="border:1px solid black;text-align:center;font-weight:bold;padding:5px;">
+                                             <span>Customer Sign</span><br/>
+                                            <span>ហត្ថលេខារបស់អតិថិជន</span>
+
+                                        </td>
+                                        <td class="text-center" colspan="2" style="border:1px solid black;padding:5px;">
+                                            <span>Name</span><br/>
+                                            <span>ឈ្មោះ​អតិថិជន</span>
+
+                                        </td>
+                                        <td class="text-center" style="border:1px solid black;padding:5px;">
+                                            <span>Tel</span><br/>
+                                            <span>លេខទូរស័ព្ទ</span>
+                                        </td>
+                                        <td class="text-center" style="border:1px solid black;padding:5px;">
+                                            <span>Date / Time</span><br/>
+                                            <span>កាលបរិច្ឆេទទទួល</span>
+                                        </td>
+                                        <td class="text-center" style="border:1px solid black;padding:5px;">
+                                            <span>Driver</span><br/>
+                                            <span>តៃកុងឡាន</span>
+                                        </td>
+                                    </tr>
+                                    <tr style="page-break-inside:avoid">
+                                        <td class="text-center" colspan="2" style="border:1px solid black;text-align:center;font-weight:bold;padding:5px;height:60px;"/>
+                                        <td class="text-center" colspan="2" style="border:1px solid black;padding:5px;height:60px;"/>
+                                        <td class="text-center" style="border:1px solid black;padding:5px;height:60px;"/>
+                                        <td class="text-center" style="border:1px solid black;padding:5px;height:60px;"/>
+                                        <td class="text-center" style="border:1px solid black;padding:5px;height:60px;"/>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div style="page-break-inside:avoid">
+                            <div class="row" style="margin-top:10px;font-weight:bold;">
+                                <div class="col-4" style="font-size:14px;margin-top: 10px;">
+                                    <div class="text-center" style="font-size:14px;margin-top: 18px;">រៀបចំ​ដោយ:</div>
+                                    <div class="text-center" style="font-size:14px">Prepared By</div>
+                                </div>
+                                <div class="col-4 text-center" style="font-size:14px;margin-top: 10px;">
+                                    <div style="font-size:14px;margin-top: 18px;">អ្នកចាត់ការទូទៅ</div>
+                                    <div style="font-size:14px">Director</div>
+                                </div>
+                                <div class="col-4 text-center" style="font-size:14px;margin-top: 10px;">
+                                    <div style="font-size:14px;margin-top: 18px;">អ្នកគ្រប់គ្រងឃ្លាំង</div>
+                                    <div style="font-size:14px">Factory Manager</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="footer">
+                            <ul class="list-inline" style="text-align: right; font-size:12px">
+                                <li>Page: <span class="page"/> of <span class="topage"/></li>
+                            </ul>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </template>
+
+    </data>
+</odoo>

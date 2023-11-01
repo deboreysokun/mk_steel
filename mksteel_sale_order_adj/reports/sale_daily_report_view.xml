@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <report
+            id="action_sale_daily_report"
+            string="Daily Report"
+            model="sale.daily.report"
+            report_type="qweb-pdf"
+            file="mksteel_sale_order_adj.sale_daily_report_view"
+            name="mksteel_sale_order_adj.sale_daily_report_view"
+    />
+
+    <template id="sale_daily_report_view">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+
+                <style>
+                    .table, .table td, .table th {
+                      border: 1px solid black;
+                      text-align: left;
+                    }
+
+                    .table {
+                      border-collapse: collapse;
+                      width: 100%;
+                    }
+
+                    .table th, .table td {
+                      padding: 10px;
+                    }
+                </style>
+
+                <div class="page">
+                    <div class="oe_structure"/>
+                    <center>
+                        <b>
+                            <h3 style="padding-top:5px">Daily Sales Report</h3>
+                        </b>
+                    </center>
+                    <center>
+                        <b>
+                            Date From: <span t-esc="data['start_date']" t-options='{"widget": "date"}'/>
+                            To:
+                            <span t-esc="data['end_date']" t-options='{"widget": "date"}'/>
+                        </b>
+                    </center>
+                    <br/>
+                        <t t-set="total_sum" t-value="0"/>
+                        <t t-set="total_weight" t-value="0"/>
+                        <table class="table table-bordered mb32" style="table-layout:auto;font-size:14px;">
+                            <thead style="color:black;">
+                                <tr style="page-break-inside:avoid">
+                                    <th style="border: 1px solid black;color:black;">N0.</th>
+                                    <th style="border: 1px solid black;color:black;">Order</th>
+                                    <th style="border: 1px solid black;color:black;">Date</th>
+                                    <th style="border: 1px solid black;color:black;">Customer</th>
+                                    <th style="width:320px; border: 1px solid black;color:black;">Items</th>
+                                    <th style="border: 1px solid black;color:black;">Price</th>
+                                    <th style="border: 1px solid black;color:black;">Kg</th>
+                                    <th style="border: 1px solid black;color:black;">Amount</th>
+                                    <th style="border: 1px solid black;color:black;">Invoice</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr t-foreach="get_data" t-as="order" style="page-break-inside:avoid">
+                                    <td>
+                                        <span t-esc="order_index + 1"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="order.name"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="order.date_order" t-options='{"widget": "date"}'/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="order.partner_id.name"/>
+                                    </td>
+                                    <td>
+                                        <t t-foreach="order.order_line" t-as="line">
+                                            <span t-esc="line.product_id.name"/>
+                                            <br/>
+                                        </t>
+                                    </td>
+                                    <td>
+                                        <t t-foreach="order.order_line" t-as="line">
+                                            <span t-esc="'{0:,.3f}'.format(line.price_unit)"/>
+                                            <br/>
+                                        </t>
+                                    </td>
+                                    <td>
+                                        <t t-foreach="order.order_line" t-as="line">
+                                            <span t-esc="'{0:,.3f}'.format(line.product_uom_qty)" />
+                                            <br/>
+                                        </t>
+                                        <t t-set="total_weight" t-value="total_weight + order.grand_total_weight"/>
+                                    </td>
+                                    <td>
+                                        <span t-esc="'{0:,.3f}'.format(order.amount_total)"/>
+                                        <t t-set="total_sum" t-value="total_sum + order.amount_total"/>
+                                    </td>
+                                    <td>
+                                        <t t-if="order.is_fully_paid"><span>Paid</span></t>
+                                        <t t-if="order.is_partially_paid"><span>Partially Paid</span></t>
+                                        <t t-if="not order.is_partially_paid and not order.is_fully_paid "><span>Not Paid</span></t>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5">
+                                    </td>
+                                    <td>
+                                        <b>Total</b>
+                                    </td>
+                                    <td>
+                                        <span t-esc="'{0:,.3f}'.format(total_weight)" />
+                                    </td>
+                                    <td>
+                                        <span t-esc="'{0:,.3f}'.format(total_sum)" />
+                                    </td>
+                                    <td>
+
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                </div>
+            </t>
+        </t>
+    </template>
+</odoo>

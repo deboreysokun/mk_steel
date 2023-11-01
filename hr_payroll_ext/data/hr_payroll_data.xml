@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+	<data noupdate="0">
+
+        <record id="ADDITION" model="hr.salary.rule.category">
+            <field name="name">ADDITION</field>
+            <field name="code">ADDITION</field>
+        </record>
+
+        <record id="INCETIVE" model="hr.salary.rule.category">
+            <field name="name">INCETIVE</field>
+            <field name="code">INCETIVE</field>
+
+        </record>
+
+        <record id="Additional_Allowance" model="hr.salary.rule.category">
+            <field name="name">Additional Allowance</field>
+            <field name="code">ADTALW</field>
+
+        </record>
+
+        <record id="RemainingLeave" model="hr.salary.rule.category">
+            <field name="name">Remaining Leave</field>
+            <field name="code">RL</field>
+        </record>
+
+        <record id="AllowanceOnTax" model="hr.salary.rule.category">
+            <field name="name">Allowance On Tax</field>
+            <field name="code">AOT</field>
+        </record>
+
+        <record id="TaxbaseOnSalary" model="hr.salary.rule.category">
+            <field name="name">Taxbase on Salary</field>
+            <field name="code">TBOS</field>
+        </record>
+
+        <record id="TaxOnSalary" model="hr.salary.rule.category">
+            <field name="name">Tax On Salary</field>
+            <field name="code">TOS</field>
+        </record>
+
+        <record id="hr_employee_incentive_salary_rule" model="hr.salary.rule">
+            <field name="name">Incentive(%) </field>
+            <field name="sequence" eval="20" />
+            <field name="code">INCETIVE</field>
+            <field name="category_id" ref="hr_payroll_community.ALW"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = round(contract.wage * payslip.incentive /100,2)
+            </field>
+            <field name="register_id"
+                ref="hr_payroll_community.contrib_register_employees"/>
+        </record>
+
+		<record id="hr_employee_addtional_allowance_salary_rule" model="hr.salary.rule">
+			<field name="name">Additional Allowance</field>
+			<field name="sequence" eval="21" />
+			<field name="code">ADTALW</field>
+			<field name="category_id" ref="hr_payroll_community.ALW"/>
+			<field name="condition_select">none</field>
+			<field name="amount_select">code</field>
+			<field name="amount_python_compute">result = payslip.additional_allowance</field>
+			<field name="register_id"
+				ref="hr_payroll_community.contrib_register_employees" />
+		</record>
+
+        <record id="hr_employee_remaining_leave_salary_rule" model="hr.salary.rule">
+            <field name="name">Remaining legal Leave</field>
+            <field name="sequence" eval="22" />
+            <field name="code">RL</field>
+            <field name="category_id" ref="hr_payroll_community.ALW"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = round(contract.wage / 26 * payslip.remaining_leave,2)
+            </field>
+            <field name="register_id"
+                ref="hr_payroll_community.contrib_register_employees" />
+        </record>
+
+        <record id="hr_employee_ot_150_salary_rule" model="hr.salary.rule">
+            <field name="name">Overtime WeekDay 150%</field>
+            <field name="sequence" eval="23" />
+            <field name="code">OTWD150</field>
+            <field name="category_id" ref="hr_payroll_community.ALW"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">salary_per_hour = contract.wage / 208
+result = round(salary_per_hour * payslip.overtime_150 * 1.5,2)
+            </field>
+            <field name="register_id"
+                ref="hr_payroll_community.contrib_register_employees" />
+        </record>
+
+        <record id="hr_employee_ot_200_salary_rule" model="hr.salary.rule">
+            <field name="name">Overtime WeekDay 200%</field>
+            <field name="sequence" eval="23" />
+            <field name="code">OTWD200</field>
+            <field name="category_id" ref="hr_payroll_community.ALW"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">salary_per_hour = contract.wage / 208
+result = round(salary_per_hour * payslip.overtime_200 * 2,2)
+            </field>
+            <field name="register_id"
+                ref="hr_payroll_community.contrib_register_employees" />
+        </record>
+
+        <record id="hr_employee_severance_salary_rule" model="hr.salary.rule">
+            <field name="name">Severance</field>
+            <field name="sequence" eval="24" />
+            <field name="code">SEVN</field>
+            <field name="category_id" ref="hr_payroll_community.ALW"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = payslip.severance</field>
+            <field name="register_id"
+                ref="hr_payroll_community.contrib_register_employees" />
+        </record>
+
+        <record id="hr_employee_attendance_bonus_salary_rule" model="hr.salary.rule">
+            <field name="name">Attendance Bonus</field>
+            <field name="sequence" eval="25" />
+            <field name="code">ATBN</field>
+            <field name="category_id" ref="hr_payroll_community.ALW"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = payslip.attendance_bonus</field>
+        </record>
+
+        <record id="hr_employee_deduction_salary_rule" model="hr.salary.rule">
+            <field name="name">Deduction</field>
+            <field name="sequence" eval="26" />
+            <field name="code">DEDUC</field>
+            <field name="category_id" ref="hr_payroll_community.DED"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = -payslip.deduction</field>
+        </record>
+
+        <record id="hr_employee_seniority_bonus_salary_rule" model="hr.salary.rule">
+            <field name="name">Seniority Bonus</field>
+            <field name="sequence" eval="27" />
+            <field name="code">SNBN</field>
+            <field name="category_id" ref="hr_payroll_community.ALW"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = payslip.seniority_bonus</field>
+        </record>
+
+        <record id="hr_employee_seniority_payment_salary_rule" model="hr.salary.rule">
+            <field name="name">Seniority Payment</field>
+            <field name="sequence" eval="28" />
+            <field name="code">SNPYBN</field>
+            <field name="category_id" ref="hr_payroll_community.ALW"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = payslip.seniority_payment</field>
+        </record>
+
+        <record id="hr_employee_allowance_tax" model="hr.salary.rule">
+            <field name="name">Allowance On Tax</field>
+            <field name="sequence" eval="151" />
+            <field name="code">AOT</field>
+            <field name="category_id" ref="hr_payroll_ext.AllowanceOnTax"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = round(employee.children * 150000 / payslip.exchange_rate, 2)
+            </field>
+        </record>
+
+        <record id="hr_employee_taxbase" model="hr.salary.rule">
+            <field name="name">Taxbase on Salary</field>
+            <field name="sequence" eval="152" />
+            <field name="code">TBOS</field>
+            <field name="category_id" ref="hr_payroll_ext.TaxbaseOnSalary"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">result = categories.GROSS - categories.AOT
+            </field>
+        </record>
+
+        <record id="hr_employee_tax_on_salary" model="hr.salary.rule">
+            <field name="name">Tax on Salary</field>
+            <field name="sequence" eval="153" />
+            <field name="code">TOS</field>
+            <field name="category_id" ref="hr_payroll_ext.TaxOnSalary"/>
+            <field name="condition_select">none</field>
+            <field name="amount_select">code</field>
+            <field name="amount_python_compute">taxbase = categories.TBOS * payslip.exchange_rate
+            <!-- if (taxbase <= 1300000):
+                result = 0
+            elif (taxbase >= 1300001) and (taxbase <= 2000000):
+                result = round(((taxbase * 0.05) - 65000) / payslip.exchange_rate, 2)
+            elif (taxbase >= 2000001) and (taxbase <= 8500000):
+                result = round(((taxbase * 0.1) - 165000) / payslip.exchange_rate, 2)
+            elif (taxbase >= 8500001) and (taxbase<= 12500000):
+                result = round(((taxbase * 0.15 ) - 590000) / payslip.exchange_rate, 2)
+            else:
+                result = round(((taxbase * 0.2) - 1215000) / payslip.exchange_rate, 2)       # true if taxbase is over 12500000 -->
+            </field>
+        </record>
+
+	</data>
+</odoo>

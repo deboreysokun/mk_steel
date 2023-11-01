@@ -1,0 +1,28 @@
+<odoo>
+    <data>
+        <record id="view_payroll_exchange_rate" model="ir.ui.view">
+            <field name="name">payroll.exchange.rate</field>
+            <field name="model">payroll.exchange.rate</field>
+            <field name="arch" type="xml">
+                <tree string="Payroll Rate" editable="top" default_order="date desc">
+                    <field name="date"/>
+                    <field name="payroll_rate"/>
+                </tree>
+
+            </field>
+        </record>
+
+        <record id="action_payroll_rate" model="ir.actions.act_window">
+            <field name="name">Payroll Rate</field>
+            <field name="res_model">payroll.exchange.rate</field>
+            <field name="view_mode">tree,form</field>
+            <field name="view_id" ref="payroll_report_excel.view_payroll_exchange_rate"/>
+        </record>
+        <menuitem
+            id="menu_action_hr_payroll_rate"
+            action="action_payroll_rate"
+            parent="hr_payroll_community.menu_hr_payroll_community_configuration"
+            sequence="20"
+        />
+    </data>
+</odoo>

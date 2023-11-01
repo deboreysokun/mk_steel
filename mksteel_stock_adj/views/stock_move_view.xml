@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- Copyright 2018 Tecnativa - Sergio Teruel
+     License AGPL-3.0 or later (https://www.gnu.org/licenses/agpl). -->
+<odoo>
+    <record id="view_stock_move_line_operation_tree" model="ir.ui.view">
+        <field name="name">Stock Move Secondary Unit</field>
+        <field name="model">stock.move.line</field>
+        <field name="inherit_id" ref="stock_secondary_unit.view_stock_move_line_operation_tree" />
+        <field name="groups_id" eval="[(4, ref('uom.group_uom'))]" />
+        <field name="arch" type="xml">
+            <field name="secondary_uom_qty" position="replace">
+                <field name="secondary_uom_qty" string="Pcs" digits="[42,0]"/>
+            </field>
+            <field name="secondary_uom_id" position="replace">
+                <field
+                    name="secondary_uom_id"
+                    string="Kg/Pcs"
+                    domain="[('product_tmpl_id.product_variant_ids', 'in', [product_id])]"
+                    options="{'no_create': True}"
+                />
+            </field>
+        </field>
+    </record>
+    <record id="view_stock_move_line_detailed_operation_tree" model="ir.ui.view">
+        <field name="name">stock.move.line.operations.tree</field>
+        <field name="model">stock.move.line</field>
+        <field
+            name="inherit_id"
+            ref="stock_secondary_unit.view_stock_move_line_detailed_operation_tree"
+        />
+        <field name="groups_id" eval="[(4, ref('uom.group_uom'))]" />
+        <field name="arch" type="xml">
+            <field name="secondary_uom_qty" position="replace">
+                <field name="secondary_uom_qty" string="Pcs" digits="[42,0]" />
+            </field>
+            <field name="secondary_uom_id" position="replace">
+                <field
+                    name="secondary_uom_id"
+                    string="Kg/Pcs"
+                    domain="[('product_tmpl_id.product_variant_ids', 'in', [product_id])]"
+                    options="{'no_create': True}"
+                />
+            </field>
+        </field>
+    </record>
+    <record id="view_picking_form" model="ir.ui.view">
+        <field name="name">Stock Picking Secondary Unit</field>
+        <field name="model">stock.picking</field>
+        <field name="inherit_id" ref="stock_secondary_unit.view_picking_form" />
+        <field name="groups_id" eval="[(4, ref('uom.group_uom'))]" />
+        <field name="arch" type="xml">
+            <xpath
+                expr="//field[@name='move_ids_without_package']/tree/field[@name='secondary_uom_qty']"
+                position="replace"
+            >
+                <field name="secondary_uom_qty" string="Pcs" digits="[42,0]"/>
+            </xpath>
+            <xpath
+                expr="//field[@name='move_ids_without_package']/tree/field[@name='secondary_uom_id']"
+                position="replace">
+                <field
+                    name="secondary_uom_id"
+                    string="Kg/Pcs"
+                    domain="[('product_tmpl_id.product_variant_ids', 'in', [product_id])]"
+                    options="{'no_create': True}"
+                />
+            </xpath>
+            <xpath expr="//field[@name='origin']" position="after">
+                <field name="invoice_number"/>
+            </xpath>
+        </field>
+    </record>
+</odoo>

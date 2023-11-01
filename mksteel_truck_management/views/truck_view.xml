@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="truck_group_user" model="res.groups">
+        <field name="name">Manage Vehicle</field>
+    </record>
+
+    <record id="truck_repair_group_user" model="res.groups">
+        <field name="name">Manage Vehicle Repair History</field>
+    </record>
+
+    <record id="truck_fuel_group_user" model="res.groups">
+        <field name="name">Manage Vehicle Fuel History</field>
+    </record>
+
+
+    <record id="truck_view_form" model="ir.ui.view">
+        <field name="name">truck.view.form</field>
+        <field name="model">truck.truck</field>
+        <field name="type">form</field>
+        <field name="arch" type="xml">
+            <form string="Vehicle">
+                <sheet>
+                    <widget name="web_ribbon" title="Archived" bg_color="bg-danger" attrs="{'invisible': [('active', '=', True)]}"/>
+                    <field name="active" invisible="1"/>
+                    <div class="oe_title">
+                        <h1>
+                            <field name="name" placeholder="Vehicle Name"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name='register_number'/>
+                            <field name='license_plate'/>
+                            <field name='model_id'/>
+                        </group>
+                        <group>
+                            <field name='chassis'/>
+                            <field name="buy_date"/>
+                            <field name="driver_ids" widget="many2many_tags"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page name="other" string="Other Information">
+                            <group>
+                                <field name="insurance"/>
+                                <field name="company"/>
+                                <field name="expiry_date"/>
+                                <field name="inspection_date"/>
+                            </group>
+                        </page>
+                        <page name="repair_history" string="Repair History" groups="mksteel_truck_management.truck_repair_group_user">
+                            <field name="maintenance_ids">
+                                <tree string="Repair Maintenance" editable="bottom">
+                                    <field name="date"/>
+                                    <field name="description"/>
+                                    <field name="amount" sum="Total Amount"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page name="fuel_history" string="Fuel History" groups="mksteel_truck_management.truck_fuel_group_user">
+                            <field name="fuel_log_ids">
+                                <tree string="Repair Maintenance" editable="bottom">
+                                    <field name="date"/>
+                                    <field name="description"/>
+                                    <field name="driver_id" options="{'no_create': True}"/>
+                                    <field name="ass_driver_id" options="{'no_create': True}"/>
+                                    <field name="km" sum="Total Km" digits="[42,0]"/>
+                                    <field name="fuel_qty" sum="Total qty"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids" widget="mail_followers" groups="base.group_user"/>
+                    <field name="activity_ids" widget="mail_activity"/>
+                    <field name="message_ids" widget="mail_thread"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <record id="account_asset_view_search" model="ir.ui.view">
+        <field name="name">truck.view.search</field>
+        <field name="model">truck.truck</field>
+        <field name="arch" type="xml">
+            <search string="Search Truck">
+                <field name="name" string="Vehicle" />
+                <filter
+                    string="Archived"
+                    domain="[('active', '=', False)]"
+                    name="inactive"
+                />
+                <group expand="0" string="Group By...">
+                    <filter
+                        string="Model"
+                        name="model"
+                        domain=""
+                        context="{'group_by': 'model_id'}"
+                    />
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Tree View Vehicle -->
+    <record id="truck_view_tree_view" model="ir.ui.view">
+        <field name="name">truck.view.tree</field>
+        <field name="model">truck.truck</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Vehicle" decoration-danger="expiry_date &lt; current_date">
+                <field name="name"/>
+                <field name="license_plate"/>
+                <field name="driver_ids" widget="many2many_tags"/>
+                <field name="expiry_date"/>
+                <field name="inspection_date"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Actions -->
+    <record id="truck_view_action" model="ir.actions.act_window">
+        <field name="name">Vehicle View</field>
+        <field name="res_model">truck.truck</field>
+        <field name="view_mode">tree,form</field>
+        <field name="view_id" ref="truck_view_tree_view"/>
+    </record>
+
+    <!-- MenuItems -->
+    <menuitem name="Vehicle" id="menu_root" sequence="5" groups="truck_group_user" web_icon="mksteel_truck_management,static/description/icon.png"/>
+    <menuitem id="menu_truck" name="Vehicle" parent="menu_root" action="truck_view_action" sequence="21" groups="truck_group_user" string="Vehicle"/>
+
+
+    <!-- Tree View Vehicle Repair History -->
+    <record id="truck_repair_history_view_tree_view" model="ir.ui.view">
+        <field name="name">Vehicle Maintenance Line tree</field>
+        <field name="model">truck.maintenance.line</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Vehicle Repair History" create="false" import="false">
+                <field name="active" invisible="1"/>
+                <field name="truck_id"/>
+                <field name="date"/>
+                <field name="description"/>
+                <field name="amount"/>
+            </tree>
+        </field>
+    </record>
+    <!-- Actions Repair History -->
+    <record id="truck_repair_history_view_action" model="ir.actions.act_window">
+        <field name="name">Vehicle Repair History</field>
+        <field name="res_model">truck.maintenance.line</field>
+        <field name="view_mode">tree</field>
+        <field name="domain">[('truck_id.active','=', True)]</field>
+        <field name="view_id" ref="truck_repair_history_view_tree_view"/>
+        <field name="context">{'search_default_group_by_vehicle': 1}</field>
+    </record>
+
+    <record id="truck_repair_history_view_search" model="ir.ui.view">
+        <field name="name">Vehicle Repair History Search</field>
+        <field name="model">truck.maintenance.line</field>
+        <field name="arch" type="xml">
+            <search string="Search Vehicle">
+                <field name="truck_id" string="Vehicle" filter_domain="[('truck_id.name', 'ilike', self)]" />
+                <filter string="Today" name="today" domain="[('date', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="This Week" name="date_filter" domain="[
+                ('date', '>=', (datetime.datetime.combine(context_today() + relativedelta(weeks=-1,days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S')),
+                ('date', '&lt;', (datetime.datetime.combine(context_today() + relativedelta(days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
+                <filter string="This Month" name="thismonth" domain="[('date','&gt;=',time.strftime('%%Y-%%m-01'))]"/>
+                <filter string="This Year" name="year" domain="[('date','&lt;=', time.strftime('%%Y-12-31')),('date','&gt;=',time.strftime('%%Y-01-01')),('date','&lt;=', time.strftime('%%Y-12-31')),('date','&gt;=',time.strftime('%%Y-01-01'))]"/>
+                <group expand="0" string="Group By...">
+                    <filter
+                        string="Vehicle"
+                        name="group_by_vehicle"
+                        domain=""
+                        context="{'group_by': 'truck_id'}"
+                    />
+                    <filter name="group_by_date" string="Date" context="{'group_by': 'date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <menuitem id="menu_truck_maintenance" name="Vehicle Repair History" parent="menu_root" action="truck_repair_history_view_action" sequence="22" groups="mksteel_truck_management.truck_repair_group_user" string="Repair History"/>
+
+    <!-- Tree View Vehicle Fuel History -->
+    <record id="truck_fuel_history_view_tree_view" model="ir.ui.view">
+        <field name="name">Vehicle Fuel line tree</field>
+        <field name="model">truck.fuel.line</field>
+        <field name="type">tree</field>
+        <field name="arch" type="xml">
+            <tree string="Vehicle Fuel History" create="false" import="false">
+                <field name="active" invisible="1"/>
+                <field name="truck_id"/>
+                <field name="date"/>
+                <field name="description"/>
+                <field name="driver_id" options="{'no_create': True}"/>
+                <field name="ass_driver_id" options="{'no_create': True}"/>
+                <field name="km"/>
+                <field name="fuel_qty"/>
+            </tree>
+        </field>
+    </record>
+    <!-- Actions Fuel History -->
+    <record id="truck_fuel_history_view_action" model="ir.actions.act_window">
+        <field name="name">Vehicle Fuel History</field>
+        <field name="res_model">truck.fuel.line</field>
+        <field name="view_mode">tree</field>
+        <field name="domain">[('truck_id.active','=', True)]</field>
+        <field name="view_id" ref="truck_fuel_history_view_tree_view"/>
+        <field name="context">{'search_default_group_by_vehicle': 1}</field>
+    </record>
+
+    <record id="truck_fuel_history_view_search" model="ir.ui.view">
+        <field name="name">Vehicle Fuel History Search</field>
+        <field name="model">truck.fuel.line</field>
+        <field name="arch" type="xml">
+            <search string="Search Vehicle">
+                <field name="truck_id" string="Vehicle" filter_domain="[('truck_id.name', 'ilike', self)]" />
+                <filter string="Today" name="today" domain="[('date', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="This Week" name="date_filter" domain="[
+                ('date', '>=', (datetime.datetime.combine(context_today() + relativedelta(weeks=-1,days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S')),
+                ('date', '&lt;', (datetime.datetime.combine(context_today() + relativedelta(days=1,weekday=0), datetime.time(0,0,0)).to_utc()).strftime('%Y-%m-%d %H:%M:%S'))]"/>
+                <filter string="This Month" name="thismonth" domain="[('date','&gt;=',time.strftime('%%Y-%%m-01'))]"/>
+                <filter string="This Year" name="year" domain="[('date','&lt;=', time.strftime('%%Y-12-31')),('date','&gt;=',time.strftime('%%Y-01-01')),('date','&lt;=', time.strftime('%%Y-12-31')),('date','&gt;=',time.strftime('%%Y-01-01'))]"/>
+                <group expand="0" string="Group By...">
+                    <filter
+                        string="Vehicle"
+                        name="group_by_vehicle"
+                        domain=""
+                        context="{'group_by': 'truck_id'}"
+                    />
+                    <filter name="group_by_date" string="Date" context="{'group_by': 'date:day'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <menuitem id="menu_fuel_history" name="Vehicle Fuel History" parent="menu_root" action="truck_fuel_history_view_action" sequence="23" groups="mksteel_truck_management.truck_fuel_group_user" string="Fuel History"/>
+
+</odoo>

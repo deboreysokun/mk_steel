@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<odoo>
+
+    <report
+        id="action_report_vat_summary"
+        string="Summary Vat"
+        model="vat.summary"
+        report_type="qweb-pdf"
+        file="mksteel_vat_summary.report_vat_summary"
+        name="mksteel_vat_summary.report_vat_summary"
+        print_report_name="(object.name)"
+    />
+
+    <template id="report_vat_summary">
+        <t t-call="web.html_container">
+            <t t-call="web.external_layout">
+                <t t-foreach="docs" t-as="doc">
+                    <style>
+                        .table, .table td, .table th {
+                          border: 1px solid black;
+                          text-align: left;
+                        }
+
+                        .table {
+                          border-collapse: collapse;
+                          width: 100%;
+                        }
+
+                        .table th, .table td {
+                          padding: 10px;
+                        }
+                    </style>
+                    <div class="page">
+                        <div class="oe_xstructure"/>
+
+                            <h3 class="mt16">
+                                <span t-field="doc.name"/>
+                            </h3>
+
+                            <table class="table table-bordered mb32" style="table-layout:auto">
+                                <thead style="color:black;">
+                                    <tr style="page-break-inside:avoid">
+                                        <th style="border: 1px solid black;color:black;">Inv.N0</th>
+                                        <th style="border: 1px solid black;color:black;">Date</th>
+                                        <th style="border: 1px solid black;color:black;">Customer</th>
+                                        <th style="border: 1px solid black;color:black;">Amount(Riel)</th>
+                                        <th style="border: 1px solid black;color:black;">OUT</th>
+                                        <th style="border: 1px solid black;color:black;">IN</th>
+                                        <!--th style="border: 1px solid black;color:black;">Balance</th-->
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr t-foreach="doc.vat_summary_ids" t-as="line" style="page-break-inside:avoid">
+                                        <td>
+                                            <span t-esc="line.number_id"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="line.date" t-options='{"widget": "date"}'/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="line.partner_name"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="'{0:,.0f}'.format(line.amount)"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="'{0:,.0f}'.format(line.vat_amount)"/>
+                                        </td>
+                                        <td>
+                                            <span t-esc="'{0:,.0f}'.format(line.vat_in)"/>
+                                        </td>
+                                        <!--td>
+                                            <span t-esc="line.balance"/>
+                                        </td-->
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table class="table table-sm">
+                                <tr class="border-black o_subtotal">
+                                    <td><strong>Total Balance(Riel)</strong></td>
+                                    <td class="text-right">
+                                        <span t-esc="'{0:,.0f}'.format(doc.end_balance)"/>
+                                    </td>
+                                </tr>
+                                <tr class="border-black o_subtotal">
+                                    <td><strong>Exchange Rate</strong></td>
+                                    <td class="text-right">
+                                        <span t-esc="'{0:,.0f}'.format(doc.exchange_rate)"/>
+                                    </td>
+                                </tr>
+                                <tr class="border-black o_subtotal">
+                                    <td><strong>Total Balance(USD)</strong></td>
+                                    <td class="text-right">
+                                        <span t-esc="'{0:,.2f}'.format(doc.end_balance_usd)"/>
+                                    </td>
+                                </tr>
+                            </table>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>
